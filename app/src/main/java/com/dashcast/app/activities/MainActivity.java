@@ -1,13 +1,13 @@
 package com.dashcast.app.activities;
 
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.MediaRouteButton;
 import android.support.v7.media.MediaControlIntent;
 import android.support.v7.media.MediaRouteSelector;
@@ -28,12 +28,10 @@ import com.google.android.gms.common.api.ResultCallback;
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks {
 
     private static final int ACCOUNT_PICK_REQUEST_CODE = 1;
     private static final int REQUEST_AUTHORIZATION = 2;
@@ -91,6 +89,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
+                MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
+    }
+
+    @Override
+    protected void onPause() {
+        if (isFinishing()) {
+            mMediaRouter.removeCallback(mMediaRouterCallback);
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ACCOUNT_PICK_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -123,7 +136,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public void onConnected(Bundle bundle) {
         try {
-            Cast.CastApi.joinApplication(mApiClient, Constants.CAST_APP_ID).setResultCallback(new ResultCallback<Cast.ApplicationConnectionResult>() {
+            Cast.CastApi.launchApplication(mApiClient, Constants.CAST_APP_ID).setResultCallback(new ResultCallback<Cast.ApplicationConnectionResult>() {
                 @Override
                 public void onResult(Cast.ApplicationConnectionResult applicationConnectionResult) {
                     mChannel = new DashCastChannel();
@@ -132,14 +145,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    JSONObject json = new JSONObject();
-                    try {
-                        json.put("action", "join");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Cast.CastApi.sendMessage(mApiClient, DashCastChannel.NAMESPACE, json.toString());
-                    Log.d(TAG, json.toString());
                 }
             });
         } catch (Exception e) {
@@ -188,20 +193,24 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         @Override
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
             Toast.makeText(MainActivity.this, info.getName(), Toast.LENGTH_LONG).show();
-            Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
-                    .builder(CastDevice.getFromBundle(info.getExtras()), null);
-
-            mApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                    .addApi(Cast.API, apiOptionsBuilder.build())
-                    .addConnectionCallbacks(MainActivity.this)
-                    .build();
-
-            mApiClient.connect();
+            launchReceiver(CastDevice.getFromBundle(info.getExtras()));
         }
 
         @Override
         public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo info) {
         }
+    }
+
+    private void launchReceiver(CastDevice device) {
+        Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
+                .builder(device, null);
+
+        mApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Cast.API, apiOptionsBuilder.build())
+                .addConnectionCallbacks(this)
+                .build();
+
+        mApiClient.connect();
     }
 
     private class DashCastChannel implements Cast.MessageReceivedCallback {

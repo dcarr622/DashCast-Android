@@ -33,7 +33,7 @@
                     android:layout_alignParentTop="true"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
-                    android:text="Join the Party"
+                    android:text="Start DashCast"
                     android:textColor="@color/white"
                     android:textSize="38sp" />
 
