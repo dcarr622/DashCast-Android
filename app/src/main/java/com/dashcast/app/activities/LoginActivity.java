@@ -97,12 +97,14 @@ public class LoginActivity extends Activity {
                     protected Void doInBackground(Void... voids) {
                         try {
                             Log.d("scope", Constants.SCOPE);
+                            Log.d("username", sharedPrefs.getString("account", null));
                             Log.d("token", GoogleAuthUtil.getToken(LoginActivity.this, sharedPrefs.getString("account", null), Constants.SCOPE));
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (UserRecoverableAuthException e) {
                             startActivityForResult(e.getIntent(), REQUEST_AUTHORIZATION);
                         } catch (GoogleAuthException e) {
+                            Log.d(TAG, e.toString());
                             e.printStackTrace();
                         }
                         return null;
