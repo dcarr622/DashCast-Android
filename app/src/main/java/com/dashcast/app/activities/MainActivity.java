@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.dashcast.app.Constants;
@@ -46,16 +47,20 @@ public class MainActivity extends Activity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mContext = this;
 
-        mSocialAuthAdapter = new SocialAuthAdapter(new ResponseListener());;
+        mSocialAuthAdapter = new SocialAuthAdapter(new ResponseListener());
 
 //        mSocialAuthAdapter.authorize(this, SocialAuthAdapter.Provider.FACEBOOK);
 //        Log.d(TAG, mSocialAuthAdapter.getCurrentProvider().getAccessGrant().getKey());
 
+        String nextAlarm = Settings.System.getString(getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED);
+        Log.d(TAG, "hi");
+        Log.d(TAG, "nextAlarm: " + nextAlarm);
+
         final String account = sharedPrefs.getString("account", null);
-//        if (account == null) {
+        if (account == null) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivityForResult(intent, ACCOUNT_PICK_REQUEST_CODE);
-//        }
+        }
     }
 
     @Override

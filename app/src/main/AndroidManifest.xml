@@ -11,6 +11,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <receiver android:name=".AlarmReciever">
+            <intent-filter>
+                <action android:name="android.intent.action.ALARM_CHANGED"></action>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".WiFiConnectedReciever" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
