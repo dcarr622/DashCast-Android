@@ -7,5 +7,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="facebook_authorized">facebook_authorized</string>
+    <string name="connect_guide">Connect to Chromecast to set up your dashboard</string>
 
 </resources>

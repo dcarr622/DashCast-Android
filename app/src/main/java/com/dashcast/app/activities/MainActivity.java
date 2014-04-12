@@ -8,22 +8,32 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.support.v7.app.MediaRouteButton;
+import android.support.v7.media.MediaControlIntent;
+import android.support.v7.media.MediaRouteSelector;
+import android.support.v7.media.MediaRouter;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.dashcast.app.Constants;
 import com.dashcast.app.R;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.cast.Cast;
+import com.google.android.gms.cast.CastDevice;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 
 import org.brickred.socialauth.android.DialogListener;
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.brickred.socialauth.android.SocialAuthError;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks {
 
     private static final int ACCOUNT_PICK_REQUEST_CODE = 1;
     private static final int REQUEST_AUTHORIZATION = 2;
@@ -33,6 +43,13 @@ public class MainActivity extends Activity {
     private static SharedPreferences sharedPrefs;
     private Context mContext;
     private static SocialAuthAdapter mSocialAuthAdapter;
+
+    /* Chromecast Stuff */
+    private MediaRouter mMediaRouter;
+    private MediaRouteSelector mMediaRouteSelector;
+    private MyMediaRouterCallback mMediaRouterCallback;
+    private DashCastChannel mChannel;
+    private GoogleApiClient mApiClient;
 
     public static SocialAuthAdapter getSocialAuthAdapter() {
         return mSocialAuthAdapter;
@@ -47,14 +64,24 @@ public class MainActivity extends Activity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         mContext = this;
 
+        /* Set up Cast button */
+        MediaRouteButton mediaRouteButton = (MediaRouteButton) findViewById(R.id.media_route_button);
+
+        mMediaRouter = MediaRouter.getInstance(this);
+
+        mMediaRouteSelector = new MediaRouteSelector.Builder()
+                //.addControlCategory(CastMediaControlIntent.categoryForRemotePlayback(Constants.CAST_APP_ID))
+                .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
+                .build();
+
+        mMediaRouterCallback = new MyMediaRouterCallback();
+
+        mediaRouteButton.setRouteSelector(mMediaRouteSelector);
+
         mSocialAuthAdapter = new SocialAuthAdapter(new ResponseListener());
 
 //        mSocialAuthAdapter.authorize(this, SocialAuthAdapter.Provider.FACEBOOK);
 //        Log.d(TAG, mSocialAuthAdapter.getCurrentProvider().getAccessGrant().getKey());
-
-        String nextAlarm = Settings.System.getString(getContentResolver(), Settings.System.NEXT_ALARM_FORMATTED);
-        Log.d(TAG, "hi");
-        Log.d(TAG, "nextAlarm: " + nextAlarm);
 
         final String account = sharedPrefs.getString("account", null);
         if (account == null) {
@@ -93,6 +120,39 @@ public class MainActivity extends Activity {
             super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        try {
+            Cast.CastApi.joinApplication(mApiClient, Constants.CAST_APP_ID).setResultCallback(new ResultCallback<Cast.ApplicationConnectionResult>() {
+                @Override
+                public void onResult(Cast.ApplicationConnectionResult applicationConnectionResult) {
+                    mChannel = new DashCastChannel();
+                    try {
+                        Cast.CastApi.setMessageReceivedCallbacks(mApiClient, DashCastChannel.NAMESPACE, mChannel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("action", "join");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Cast.CastApi.sendMessage(mApiClient, DashCastChannel.NAMESPACE, json.toString());
+                    Log.d(TAG, json.toString());
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to send message", e);
+        }
+        Log.d(TAG, "connected to chromecast");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
     private final class ResponseListener implements DialogListener {
         public void onComplete(Bundle values) {
             String providerName = values.getString(SocialAuthAdapter.PROVIDER);
@@ -121,6 +181,41 @@ public class MainActivity extends Activity {
 
         }
 
+    }
+
+    private class MyMediaRouterCallback extends MediaRouter.Callback {
+
+        @Override
+        public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo info) {
+            Toast.makeText(MainActivity.this, info.getName(), Toast.LENGTH_LONG).show();
+            Cast.CastOptions.Builder apiOptionsBuilder = Cast.CastOptions
+                    .builder(CastDevice.getFromBundle(info.getExtras()), null);
+
+            mApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                    .addApi(Cast.API, apiOptionsBuilder.build())
+                    .addConnectionCallbacks(MainActivity.this)
+                    .build();
+
+            mApiClient.connect();
+        }
+
+        @Override
+        public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo info) {
+        }
+    }
+
+    private class DashCastChannel implements Cast.MessageReceivedCallback {
+
+        public static final String NAMESPACE = "urn:x-cast:com.qcastapp";
+
+        public String getNamespace() {
+            return NAMESPACE;
+        }
+
+        @Override
+        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
+
+        }
     }
 
 }
