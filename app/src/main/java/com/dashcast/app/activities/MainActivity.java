@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.dashcast.app.Constants;
+import com.dashcast.app.DashCastChannel;
 import com.dashcast.app.R;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -211,20 +212,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 .build();
 
         mApiClient.connect();
-    }
-
-    private class DashCastChannel implements Cast.MessageReceivedCallback {
-
-        public static final String NAMESPACE = "urn:x-cast:com.qcastapp";
-
-        public String getNamespace() {
-            return NAMESPACE;
-        }
-
-        @Override
-        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
-
-        }
     }
 
 }
