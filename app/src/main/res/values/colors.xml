@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <color name="cyan">#4cb4e4</color>
+    <color name="bkg">#eeeeee</color>
+    <color name="gold">#ffcc00</color>
+    <color name="gray">#d6d6d6</color>
+    <color name="offwhite">#fafafa</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="blue">#4385f4</color>
+    <color name="accent">#006ABD</color>
+    <color name="white">#FFFFFF</color>
+    <color name="twitter">#55ACEE</color>
+    <color name="venmo_blue">#49a2cf</color>
+    <color name="google_now_blue">#4385f4</color>
+    <color name="cardinal">#990000</color>
+    <color name="facebook">#3B5998</color>
+    <color name="selector_white">#22FFFFFF</color>
+
+</resources>
