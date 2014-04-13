@@ -34,7 +34,7 @@ public class TextReciever extends BroadcastReceiver {
                 String displayName = c.getString(0);
                 String ContactName = displayName;
 //                Toast.makeText(context, ContactName + " " + msg.getMessageBody(), Toast.LENGTH_LONG).show();
-                Messenger.sendMessage(Messenger.Event.GOT_TEXT_MESSAGE, ContactName + " : " + msg.getMessageBody());
+                Messenger.sendMessage(context, Messenger.Event.GOT_TEXT_MESSAGE, ContactName + " : " + msg.getMessageBody());
             } catch (Exception e) {
                 e.printStackTrace();
             }

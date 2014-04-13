@@ -29,7 +29,7 @@ public class WiFiConnectedReciever extends BroadcastReceiver {
                 Log.d("Inetify", "Wifi is connected: " + String.valueOf(networkInfo));
                 if (checkIfAtHome()) {
 //                    Log.d(TAG, "You are at home!");
-                    Messenger.sendMessage(Messenger.Event.CONNECTED_TO_WIFI, "home");
+                    Messenger.sendMessage(context, Messenger.Event.CONNECTED_TO_WIFI, "home");
                 }
             }
         }

@@ -3,7 +3,6 @@ package com.dashcast.app.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -85,18 +84,20 @@ public class LoginActivity extends Activity {
                                 String inputStr;
                                 while ((inputStr = streamReader.readLine()) != null)
                                     responseStrBuilder.append(inputStr);
-//                                Log.d(TAG, responseStrBuilder.toString());
-                                JSONObject userJSON = new JSONObject(responseStrBuilder.toString());
-                                Log.d(TAG, userJSON.getString("userId"));
-                                sharedPrefs.edit().putString("userId", userJSON.getString("userId")).commit();
+                                Log.d(TAG, responseStrBuilder.toString());
+                                if (responseStrBuilder.toString().length() > 0) {
+                                    JSONObject userJSON = new JSONObject(responseStrBuilder.toString());
+                                    Log.d(TAG, userJSON.getString("googleId"));
+                                    sharedPrefs.edit().putString("userId", userJSON.getString("userId")).commit();
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            alert.dismiss();
+//                            alert.dismiss();
                             ImageView gPlusCheck = (ImageView) findViewById(R.id.check_box_gplus);
                             gPlusCheck.setVisibility(View.VISIBLE);
-                            Intent mainIntent = new Intent(mContext, MainActivity.class);
-                            startActivity(mainIntent);
+//                            Intent mainIntent = new Intent(mContext, MainActivity.class);
+//                            startActivity(mainIntent);
                             return true;
                         }
                         return false;

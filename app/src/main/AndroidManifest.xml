@@ -17,6 +17,9 @@
         android:theme="@style/AppTheme" >
 
         <receiver
+            android:name="com.dashcast.app.recievers.OnAlarmReceive" />
+
+        <receiver
             android:name="com.dashcast.app.recievers.TextReciever" >
             <intent-filter android:priority="2147483647">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
