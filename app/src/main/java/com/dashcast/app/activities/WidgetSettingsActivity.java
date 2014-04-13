@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dashcast.app.R;
@@ -69,10 +70,12 @@ public class WidgetSettingsActivity extends Activity {
         }
 
         for (String s: formFields.keySet()) {
+            RelativeLayout newRel = (RelativeLayout) getLayoutInflater().inflate(R.layout.edit_text_wrapper, null);
             EditText et = formFields.get(s);
             et.setHint(s);
             et.setBackground(getResources().getDrawable(R.drawable.rounded_rectangle_offwhite));
-            formFieldsLayout.addView(et);
+            newRel.addView(et);
+            formFieldsLayout.addView(newRel);
         }
 
         TextView submitButton = (TextView) findViewById(R.id.submit_button_child);
