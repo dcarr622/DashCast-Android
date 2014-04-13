@@ -15,4 +15,7 @@ public class Constants {
 
     public static final String CAST_APP_ID = "D5A2EB6C";
     public static final String WIDGETS_ENDPOINT = "http://107.170.192.218/widget/all";
+
+    public enum FormInput {STRING};
+
 }

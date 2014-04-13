@@ -2,6 +2,8 @@ package com.dashcast.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.dashcast.app.activities.MainActivity;
+import com.dashcast.app.activities.WidgetSettingsActivity;
 
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.json.JSONArray;
@@ -20,7 +23,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by david on 4/12/14.
@@ -30,7 +32,6 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
     private static final String TAG = "SongListAdapter";
     private Activity mContext;
     private final JSONArray jsonArray;
-    enum FormInput {STRING};
 
     public WidgetListAdapter(Activity c, JSONArray jsonArray) {
         mContext = c;
@@ -115,15 +116,23 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
         }
 
         if (data != null) {
-            Map<String, FormInput> configFields = new HashMap<String, FormInput>();
+            HashMap<String, Constants.FormInput> configFields = new HashMap<String, Constants.FormInput>();
             Iterator<String> iter = data.keys();
             while(iter.hasNext()){
                 try {
                     String s = iter.next();
-                    configFields.put(s, FormInput.valueOf(data.getString(s)));
+                    configFields.put(s, Constants.FormInput.valueOf(data.getString(s)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            if (configFields.size() > 0) {
+                Intent widgetSettingIntent = new Intent(mContext, WidgetSettingsActivity.class);
+                Bundle extras = new Bundle();
+                extras.putSerializable("fields", configFields);
+                widgetSettingIntent.putExtras(extras);
+                mContext.startActivity(widgetSettingIntent);
+
             }
         }
     }

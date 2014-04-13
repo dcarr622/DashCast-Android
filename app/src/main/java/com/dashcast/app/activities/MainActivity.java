@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.dashcast.app.Constants;
 import com.dashcast.app.R;
@@ -129,8 +128,7 @@ public class MainActivity extends ListActivity {
                 WidgetListAdapter widgets = null;
                 widgets = new WidgetListAdapter(mContext, widgetsArray);
                 if (widgets.getCount() == 0) {
-                    TextView empty = (TextView) getListView().getEmptyView();
-                    empty.setText("No widgets found");
+                    Log.d(TAG, "No widgets found");
                 }
                 setListAdapter(widgets);
             } else {
