@@ -49,7 +49,7 @@ public class Messenger {
             String mode = strings[0];
 
             sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String userId = sharedPrefs.getString("userId", "jabroni");
+            String userId = sharedPrefs.getString("userId", "102190104458073909670");
 
             String postURL = endpoint + "?user=" + userId + "&mode=" + mode;
 

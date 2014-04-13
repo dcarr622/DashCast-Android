@@ -17,13 +17,6 @@ import android.widget.ImageView;
 import com.dashcast.app.R;
 
 import org.brickred.socialauth.android.SocialAuthAdapter;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 
 
 public class LoginActivity extends Activity {
@@ -71,28 +64,30 @@ public class LoginActivity extends Activity {
                         boolean isRedirect = url.indexOf("http://dash.ptzlabs.com/user/oAuthCallback") == 0;
                         Log.d(TAG, url);
                         if (isRedirect) {
-//                            Log.v(TAG, "redirect detected");
-                            URL aURL = null;
-                            try {
-                                aURL = new URL(url);
-                                URLConnection conn = aURL.openConnection();
-                                conn.connect();
-                                InputStream is = conn.getInputStream();
-
-                                BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                                StringBuilder responseStrBuilder = new StringBuilder();
-                                String inputStr;
-                                while ((inputStr = streamReader.readLine()) != null)
-                                    responseStrBuilder.append(inputStr);
-                                Log.d(TAG, responseStrBuilder.toString());
-                                if (responseStrBuilder.toString().length() > 0) {
-                                    JSONObject userJSON = new JSONObject(responseStrBuilder.toString());
-                                    Log.d(TAG, userJSON.getString("googleId"));
-                                    sharedPrefs.edit().putString("userId", userJSON.getString("userId")).commit();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+//                            view.loadUrl();
+////                            Log.v(TAG, "redirect detected");
+//                            URL aURL = null;
+//                            try {
+//                                aURL = new URL(url);
+//
+//                                URLConnection conn = aURL.openConnection();
+//                                conn.connect();
+//                                InputStream is = conn.getInputStream();
+//
+//                                BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+//                                StringBuilder responseStrBuilder = new StringBuilder();
+//                                String inputStr;
+//                                while ((inputStr = streamReader.readLine()) != null)
+//                                    responseStrBuilder.append(inputStr);
+//                                Log.d(TAG, responseStrBuilder.toString());
+//                                if (responseStrBuilder.toString().length() > 0) {
+//                                    JSONObject userJSON = new JSONObject(responseStrBuilder.toString());
+//                                    Log.d(TAG, userJSON.getString("googleId"));
+//                                    sharedPrefs.edit().putString("userId", userJSON.getString("userId")).commit();
+//                                }
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
 //                            alert.dismiss();
                             ImageView gPlusCheck = (ImageView) findViewById(R.id.check_box_gplus);
                             gPlusCheck.setVisibility(View.VISIBLE);
@@ -105,6 +100,7 @@ public class LoginActivity extends Activity {
                 });
                 googleWebView.loadUrl(googleAuthURL.toString());
                 googleWebView.getSettings().setJavaScriptEnabled(true);
+                googleWebView.addJavascriptInterface(new JavaScriptInterface(mContext), "MyAndroid");
                 googleWebView.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
@@ -121,6 +117,13 @@ public class LoginActivity extends Activity {
     @Override
     public void onBackPressed() {
 
+    }
+
+    public class JavaScriptInterface {
+        Context mContext;
+        JavaScriptInterface(Context c) {
+            mContext = c;
+        }
     }
 
 }

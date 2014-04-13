@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.dashcast.app.R;
 import com.dashcast.app.activities.MainActivity;
 import com.dashcast.app.activities.WidgetSettingsActivity;
+import com.squareup.picasso.Picasso;
 
 import org.brickred.socialauth.android.SocialAuthAdapter;
 import org.json.JSONArray;
@@ -63,14 +65,17 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         final JSONObject thisWidget = (JSONObject) getItem(i);
         String widgetTitle = null;
+        String imageURL = null;
         try {
             widgetTitle = thisWidget.getString("name");
+            imageURL = thisWidget.getString("logo");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         view = inflater.inflate(R.layout.widget_list_item, null);
         TextView widgetTitleView = (TextView) view.findViewById(R.id.list_widget_name);
+        ImageView widgetIconView = (ImageView) view.findViewById(R.id.widget_icon);
         CheckBox enableCB = (CheckBox) view.findViewById(R.id.enable_checkbox);
         enableCB.setTag(new Integer(i));
         enableCB.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +90,7 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
         });
         try {
             widgetTitleView.setText(widgetTitle);
+            Picasso.with(mContext).load(imageURL).into(widgetIconView);
             Log.d(TAG, thisWidget.getString("name"));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -131,6 +137,7 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
                 Intent widgetSettingIntent = new Intent(mContext, WidgetSettingsActivity.class);
                 Bundle extras = new Bundle();
                 extras.putSerializable("fields", configFields);
+                extras.putString("widget", widgetTitle);
                 widgetSettingIntent.putExtras(extras);
                 mContext.startActivity(widgetSettingIntent);
 
