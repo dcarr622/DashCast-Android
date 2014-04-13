@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.SupplicantState;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -17,25 +17,27 @@ public class WiFiConnectedReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive in WiFiConnectedReciever");
         mContext = context;
-        String action = intent.getAction();
-        Log.d(TAG, action);
-//        if (WifiManager.SUPPLICANT_STATE_CHANGED_ACTION .equals(action)) {
-            SupplicantState state = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
-            if (SupplicantState.isValidState(state)
-                    && state == SupplicantState.COMPLETED) {
 
-                boolean connected = checkIfAtHome();
+        if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+            NetworkInfo networkInfo =
+                    intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+            if (networkInfo.isConnected()) {
+                // Wifi is connected
+                Log.d("Inetify", "Wifi is connected: " + String.valueOf(networkInfo));
+                if (checkIfAtHome()) {
+                    Log.d(TAG, "You are at home!");
+                }
             }
-//        }
+        }
     }
 
     /** Detect you are connected to home WiFi network. */
     private boolean checkIfAtHome() {
         boolean connected = false;
 
-        String homeSSID = sharedPrefs.getString("homeSSID", "none");
+//        String homeSSID = sharedPrefs.getString("homeSSID", "none");
+        String homeSSID = "MuchConnect";
         if (!(homeSSID.equals("none"))) {
             WifiManager wifiManager =
                     (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
