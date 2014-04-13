@@ -52,7 +52,7 @@
     <CheckBox
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/add_checkbox"
+        android:id="@+id/enable_checkbox"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
