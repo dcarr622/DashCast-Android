@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 
 import com.dashcast.app.R;
 
@@ -92,12 +93,12 @@ public class LoginActivity extends Activity {
                                 e.printStackTrace();
                             }
                             alert.dismiss();
+                            ImageView gPlusCheck = (ImageView) findViewById(R.id.check_box_gplus);
+                            gPlusCheck.setVisibility(View.VISIBLE);
+                            Intent mainIntent = new Intent(mContext, MainActivity.class);
+                            startActivity(mainIntent);
                             return true;
                         }
-
-//                        ImageView gPlusCheck = (ImageView) findViewById(R.id.check_box_venmo);
-//                        gPlusCheck.setVisibility(View.VISIBLE);
-//                        alert.dismiss();
                         return false;
                     }
                 });
@@ -114,29 +115,11 @@ public class LoginActivity extends Activity {
             }
         });
 
-        findViewById(R.id.facebook_sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSocialAuthAdapter.setTitleVisible(false);
-                mSocialAuthAdapter.authorize(LoginActivity.this, SocialAuthAdapter.Provider.FACEBOOK);
-            }
-        });
-
     }
 
     @Override
     public void onBackPressed() {
 
-    }
-
-    private void setNextListener() {
-        findViewById(R.id.next_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent mainIntent = new Intent(mContext, MainActivity.class);
-                startActivity(mainIntent);
-            }
-        });
     }
 
 }
