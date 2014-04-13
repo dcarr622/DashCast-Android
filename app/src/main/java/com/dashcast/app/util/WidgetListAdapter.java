@@ -1,4 +1,4 @@
-package com.dashcast.app;
+package com.dashcast.app.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.dashcast.app.R;
 import com.dashcast.app.activities.MainActivity;
 import com.dashcast.app.activities.WidgetSettingsActivity;
 

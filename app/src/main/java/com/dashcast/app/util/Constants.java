@@ -1,4 +1,4 @@
-package com.dashcast.app;
+package com.dashcast.app.util;
 
 import com.google.android.gms.common.Scopes;
 

@@ -8,9 +8,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.dashcast.app.Constants;
+import com.dashcast.app.util.Constants;
 import com.dashcast.app.R;
-import com.dashcast.app.WidgetListAdapter;
+import com.dashcast.app.util.WidgetListAdapter;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

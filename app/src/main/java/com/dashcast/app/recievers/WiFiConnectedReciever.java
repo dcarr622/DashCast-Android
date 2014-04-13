@@ -1,4 +1,4 @@
-package com.dashcast.app;
+package com.dashcast.app.recievers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
+
+import com.dashcast.app.util.Messenger;
 
 public class WiFiConnectedReciever extends BroadcastReceiver {
 
@@ -26,7 +28,8 @@ public class WiFiConnectedReciever extends BroadcastReceiver {
                 // Wifi is connected
                 Log.d("Inetify", "Wifi is connected: " + String.valueOf(networkInfo));
                 if (checkIfAtHome()) {
-                    Log.d(TAG, "You are at home!");
+//                    Log.d(TAG, "You are at home!");
+                    Messenger.sendMessage(Messenger.Event.CONNECTED_TO_WIFI, "home");
                 }
             }
         }

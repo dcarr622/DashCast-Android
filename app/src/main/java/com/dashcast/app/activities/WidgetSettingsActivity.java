@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.dashcast.app.Constants;
+import com.dashcast.app.util.Constants;
 import com.dashcast.app.R;
 
 import java.util.HashMap;
