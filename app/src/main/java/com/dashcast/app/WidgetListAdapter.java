@@ -18,6 +18,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Created by david on 4/12/14.
  */
@@ -26,6 +30,7 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
     private static final String TAG = "SongListAdapter";
     private Activity mContext;
     private final JSONArray jsonArray;
+    enum FormInput {STRING};
 
     public WidgetListAdapter(Activity c, JSONArray jsonArray) {
         mContext = c;
@@ -70,8 +75,8 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "checkbox clicked");
-                CheckBox checkBox = (CheckBox)view;
-                if(checkBox.isChecked()){
+                CheckBox checkBox = (CheckBox) view;
+                if (checkBox.isChecked()) {
                     enableOrSetup((Integer) view.getTag());
                 }
             }
@@ -86,7 +91,7 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
     }
 
     private void enableOrSetup(Integer i) {
-        Log.d(TAG, String.valueOf(i));
+//        Log.d(TAG, String.valueOf(i));
         final JSONObject thisWidget = (JSONObject) getItem(i);
         String widgetTitle = null;
         try {
@@ -95,14 +100,31 @@ public class WidgetListAdapter extends BaseAdapter implements ListAdapter {
             e.printStackTrace();
         }
 
-        if (widgetTitle.contains("Traffic")) {
-
-        }
-
-        if (widgetTitle.contains("Test")) {
+        if (widgetTitle.contains("Facebook")) {
             SocialAuthAdapter mSocialAuthAdapter = MainActivity.getSocialAuthAdapter();
             mSocialAuthAdapter.setTitleVisible(false);
             mSocialAuthAdapter.authorize(mContext, SocialAuthAdapter.Provider.FACEBOOK);
+        }
+
+        JSONObject data = null;
+        try {
+            data = thisWidget.getJSONObject("data");
+//            Log.d(TAG, data.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (data != null) {
+            Map<String, FormInput> configFields = new HashMap<String, FormInput>();
+            Iterator<String> iter = data.keys();
+            while(iter.hasNext()){
+                try {
+                    String s = iter.next();
+                    configFields.put(s, FormInput.valueOf(data.getString(s)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
